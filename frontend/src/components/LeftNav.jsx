@@ -16,7 +16,7 @@ const LeftNav = () => {
 
   return (
     <>
-      <div className="w-20 md:w-64 h-full bg-light-800 dark:bg-dark-800 border-r border-gray-200 dark:border-dark-700 flex flex-col transition-colors z-10 shrink-0">
+      <div className="w-20 md:w-64 h-full bg-light-800 dark:bg-dark-800 border-r border-light-600 dark:border-dark-600 flex flex-col transition-colors z-10 shrink-0">
         
         {/* Logo */}
         <div className="h-20 flex items-center justify-center md:justify-start md:px-6 shrink-0">
@@ -42,8 +42,6 @@ const LeftNav = () => {
         {/* Navigation Items */}
         <div className="flex-1 overflow-y-auto custom-scrollbar px-3 md:px-4 py-2 space-y-1">
           <NavItem icon={<IoChatbubbles size={22} />} label="Chats" active />
-          <NavItem icon={<IoPeople size={22} />} label="Groups" />
-          <NavItem icon={<IoCall size={22} />} label="Calls" />
           
           <div className="relative">
             <NavItem 
@@ -54,12 +52,11 @@ const LeftNav = () => {
             />
           </div>
           
-          <NavItem icon={<IoBookmark size={22} />} label="Saved" />
           <NavItem icon={<IoSettingsOutline size={22} />} label="Settings" />
         </div>
 
         {/* Bottom Section */}
-        <div className="p-3 md:p-6 border-t border-gray-200 dark:border-dark-700 space-y-4 shrink-0">
+        <div className="p-3 md:p-6 border-t border-light-600 dark:border-dark-600 space-y-4 shrink-0">
           
           {/* Profile Quick Access */}
           <div 

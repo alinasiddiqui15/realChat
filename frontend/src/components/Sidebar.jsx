@@ -14,8 +14,14 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
     const fetchUsers = async () => {
       try {
         const response = await api.get('/users'); // Assuming you have a route to get users
-        // Filter out the current user
-        setUsers(response.data.filter(u => u._id !== currentUser._id));
+        // Filter out the current user safely unwrapping nested users array if present
+        const usersList = response.data?.data?.users || response.data?.users || response.data;
+        if (Array.isArray(usersList)) {
+          setUsers(usersList.filter(u => u._id !== currentUser._id));
+        } else {
+          console.error('Expected an array of users, got:', usersList);
+          setUsers([]);
+        }
       } catch (error) {
         console.error('Error fetching users:', error);
       } finally {
@@ -29,25 +35,25 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
   }, [currentUser]);
 
   if (loading) {
-    return <div className="w-64 md:w-80 border-r border-dark-700 bg-dark-900 h-full flex"><Loader /></div>;
+    return <div className="w-64 md:w-80 border-r border-light-600 dark:border-dark-600 bg-light-800 dark:bg-dark-800 h-full flex"><Loader /></div>;
   }
 
   return (
-    <aside className="w-full h-full flex flex-col transition-all duration-300 bg-white/50 dark:bg-dark-800/50 backdrop-blur-md">
-      <div className="p-4 border-b border-gray-100 dark:border-dark-700">
+    <aside className="w-full h-full flex flex-col transition-all duration-300 bg-light-800 dark:bg-dark-800">
+      <div className="px-6 py-5 border-b border-light-600 dark:border-dark-600">
         <div className="relative">
           <input 
             type="text" 
             placeholder="Search conversations..." 
-            className="w-full bg-light-900 dark:bg-dark-900 border border-gray-200 dark:border-dark-600 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-gray-100 text-sm"
+            className="w-full bg-light-900 dark:bg-dark-900 border-none rounded-full pl-11 pr-4 py-3 focus:outline-none transition-all text-gray-800 dark:text-gray-100 placeholder-gray-400 font-medium text-sm"
           />
-          <svg className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <svg className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
       </div>
       
-      <div className="p-4 pt-5 pb-2 flex justify-between items-center">
-        <h2 className="text-gray-800 dark:text-gray-200 font-bold text-lg">All Chats</h2>
-        <span className="bg-primary-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{users.length}</span>
+      <div className="px-6 pt-5 pb-2 flex justify-between items-center">
+        <h2 className="text-gray-800 dark:text-gray-200 font-bold text-base">All Chats</h2>
+        <span className="bg-primary-500 text-gray-800 dark:text-gray-100 text-[10px] font-extrabold px-2 py-0.5 rounded-full">{users.length}</span>
       </div>
       
       <div className="flex-1 overflow-y-auto custom-scrollbar px-2">

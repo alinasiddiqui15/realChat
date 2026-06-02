@@ -50,18 +50,18 @@ const MessageInput = ({ selectedUser }) => {
   if (!selectedUser) return null;
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center gap-3">
+    <form onSubmit={handleSubmit} className="flex items-center gap-3 w-full">
       <div className="flex-1 relative">
         <input
           type="text"
           value={text}
           onChange={handleTyping}
           placeholder="Type a message..."
-          className="w-full bg-light-900 dark:bg-dark-900 border border-gray-200 dark:border-dark-600 rounded-full pl-5 pr-12 py-3.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all text-gray-800 dark:text-gray-100 placeholder-gray-400"
+          className="w-full bg-light-900 dark:bg-dark-900 border-none rounded-full pl-6 pr-14 py-4 focus:outline-none transition-all text-gray-800 dark:text-gray-100 placeholder-gray-400 font-medium text-sm"
         />
         <button
           type="button"
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-500 transition-colors p-1"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-500 transition-colors p-1"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </button>
@@ -69,7 +69,7 @@ const MessageInput = ({ selectedUser }) => {
       <button
         type="submit"
         disabled={!text.trim()}
-        className="bg-nexus-gradient text-white rounded-full hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shrink-0 w-12 h-12 shadow-lg shadow-primary-500/30"
+        className="bg-primary-500 hover:bg-primary-600 text-gray-800 dark:text-gray-100 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shrink-0 w-[52px] h-[52px] shadow-sm"
       >
         <IoSend size={20} className="ml-1" />
       </button>

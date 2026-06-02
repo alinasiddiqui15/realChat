@@ -9,29 +9,29 @@ export default {
     extend: {
       colors: {
         dark: {
-          900: '#0B0F19', // Deep navy for main bg
-          800: '#111827', // Slightly lighter for panels
-          700: '#1F2937', // Hover states
-          600: '#374151', // Borders
+          900: '#1F1F1F', // Deep warm off-black for main bg
+          800: '#2A2A2A', // Card/containers
+          700: '#353535', // Hover states
+          600: '#404040', // Borders
         },
         light: {
-          900: '#F3F4F6', // Main bg
-          800: '#FFFFFF', // Panels
-          700: '#F9FAFB', // Hover states
-          600: '#E5E7EB', // Borders
+          900: '#F6F5F2', // Soft warm beige/off-white main bg
+          800: '#FFFFFF', // Card/containers
+          700: '#F0EFEA', // Hover states
+          600: '#E3E1D9', // Borders
         },
         primary: {
-          500: '#8B5CF6', // Vibrant purple
-          600: '#7C3AED',
-          700: '#6D28D9',
+          500: 'var(--nexus-primary-500)',
+          600: 'var(--nexus-primary-600)',
+          700: 'var(--nexus-primary-700)',
         },
         accent: {
-          500: '#EC4899', // Pink accent
+          500: 'var(--nexus-accent-500)',
         }
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'nexus-gradient': 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
+        'nexus-gradient': 'var(--nexus-gradient)',
       }
     },
   },

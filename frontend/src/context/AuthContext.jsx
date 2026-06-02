@@ -45,8 +45,8 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/auth/login', { email, password });
       
       // Handle different backend response structures safely
-      const token = response.data.token || response.data.jwt;
-      const userData = response.data.user || response.data.data || response.data;
+      const token = response.data?.data?.token || response.data?.token || response.data?.jwt;
+      const userData = response.data?.data?.user || response.data?.user || response.data?.data || response.data;
       
       if (token) {
         localStorage.setItem('token', token);
@@ -69,8 +69,8 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/auth/register', { username, email, password });
       
       // Handle different backend response structures safely
-      const token = response.data.token || response.data.jwt;
-      const userData = response.data.user || response.data.data || response.data;
+      const token = response.data?.data?.token || response.data?.token || response.data?.jwt;
+      const userData = response.data?.data?.user || response.data?.user || response.data?.data || response.data;
       
       if (token) {
         localStorage.setItem('token', token);
