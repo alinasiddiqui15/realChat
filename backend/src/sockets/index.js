@@ -17,7 +17,12 @@ import logger from "../utils/logger.js";
 const initializeSocket = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: config.clientUrl,
+      origin: [
+        config.clientUrl,
+        "https://real-chat-rho.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:5173",
+      ],
       methods: ["GET", "POST"],
       credentials: true,
     },
