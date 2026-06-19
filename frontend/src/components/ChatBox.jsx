@@ -6,11 +6,13 @@ import TypingIndicator from './TypingIndicator';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
 import Loader from './Loader';
+import socketService from '../services/socket';
 
 import { IoArrowBack, IoCallOutline, IoVideocamOutline, IoEllipsisVertical } from 'react-icons/io5';
 
 const ChatBox = ({ selectedUser, onBack }) => {
   const [loading, setLoading] = useState(false);
+  const [activeRoom, setActiveRoom] = useState(null);
   const { messages, setMessages, typingUsers, onlineUsers } = useSocket();
   const { user } = useAuth();
   const messagesEndRef = useRef(null);
@@ -24,28 +26,56 @@ const ChatBox = ({ selectedUser, onBack }) => {
   }, [messages, typingUsers]);
 
   useEffect(() => {
-    const fetchMessages = async () => {
+    let currentRoomId = null;
+    const fetchRoomAndMessages = async () => {
       if (!selectedUser) return;
       
       setLoading(true);
       try {
-        const response = await api.get(`/messages/${selectedUser._id}`);
-        // Safely unwrap messages array if present inside ApiResponse
-        const messagesList = response.data?.data?.messages || response.data?.messages || response.data;
-        if (Array.isArray(messagesList)) {
-          setMessages(messagesList);
-        } else {
-          console.error('Expected an array of messages, got:', messagesList);
-          setMessages([]);
+        // Find or create direct room
+        const roomResponse = await api.post('/rooms', {
+          type: 'direct',
+          participants: [selectedUser._id]
+        });
+        const room = roomResponse.data?.data?.room || roomResponse.data?.room || roomResponse.data;
+        
+        if (room?._id) {
+          currentRoomId = room._id;
+          setActiveRoom(room);
+
+          // Join socket room
+          const socket = socketService.getSocket();
+          if (socket) {
+            socket.emit('join-room', { roomId: room._id });
+          }
+
+          // Fetch messages
+          const messagesResponse = await api.get(`/messages/${room._id}`);
+          const messagesList = messagesResponse.data?.data?.messages || messagesResponse.data?.messages || messagesResponse.data;
+          if (Array.isArray(messagesList)) {
+            setMessages(messagesList);
+          } else {
+            console.error('Expected an array of messages, got:', messagesList);
+            setMessages([]);
+          }
         }
       } catch (error) {
-        console.error('Error fetching messages:', error);
+        console.error('Error fetching room/messages:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMessages();
+    fetchRoomAndMessages();
+
+    return () => {
+      if (currentRoomId) {
+        const socket = socketService.getSocket();
+        if (socket) {
+          socket.emit('leave-room', { roomId: currentRoomId });
+        }
+      }
+    };
   }, [selectedUser, setMessages]);
 
   if (!selectedUser) {
@@ -112,7 +142,7 @@ const ChatBox = ({ selectedUser, onBack }) => {
               </div>
             ) : (
               messages.map((msg, index) => {
-                const isMe = msg.sender === user._id;
+                const isMe = (msg.senderId?._id || msg.senderId || msg.sender) === user._id;
                 return (
                   <div key={msg._id || index} className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
                     <div 
@@ -122,7 +152,7 @@ const ChatBox = ({ selectedUser, onBack }) => {
                           : 'bg-light-800 dark:bg-dark-800 text-gray-800 dark:text-gray-100 rounded-tl-sm border border-light-600 dark:border-dark-600'
                       }`}
                     >
-                      <p className="leading-relaxed text-sm font-medium">{msg.content}</p>
+                      <p className="leading-relaxed text-sm font-medium">{msg.message || msg.content}</p>
                       <span className={`text-[9px] flex justify-end mt-1 font-semibold ${isMe ? 'text-gray-600 dark:text-white/60' : 'text-gray-400 dark:text-gray-500'}`}>
                         {new Date(msg.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
@@ -148,7 +178,7 @@ const ChatBox = ({ selectedUser, onBack }) => {
 
       {/* Input */}
       <div className="p-4 md:p-6 bg-light-800 dark:bg-dark-800 border-t border-light-600 dark:border-dark-600 shrink-0">
-        <MessageInput selectedUser={selectedUser} />
+        <MessageInput selectedUser={selectedUser} activeRoom={activeRoom} />
       </div>
     </div>
   );

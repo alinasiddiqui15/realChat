@@ -2,18 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { IoSend } from 'react-icons/io5';
 import { useSocket } from '../context/SocketContext';
 
-const MessageInput = ({ selectedUser }) => {
+const MessageInput = ({ selectedUser, activeRoom }) => {
   const [text, setText] = useState('');
   const { sendMessage, sendTyping, sendStopTyping } = useSocket();
   const typingTimeoutRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!text.trim() || !selectedUser) return;
+    if (!text.trim() || !selectedUser || !activeRoom) return;
 
-    sendMessage(selectedUser._id, text.trim());
+    sendMessage(activeRoom._id, selectedUser._id, text.trim());
     setText('');
-    sendStopTyping(selectedUser._id);
+    sendStopTyping(activeRoom._id);
     
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
@@ -23,10 +23,10 @@ const MessageInput = ({ selectedUser }) => {
   const handleTyping = (e) => {
     setText(e.target.value);
     
-    if (!selectedUser) return;
+    if (!selectedUser || !activeRoom) return;
 
     // Emit typing event
-    sendTyping(selectedUser._id);
+    sendTyping(activeRoom._id);
 
     // Clear previous timeout
     if (typingTimeoutRef.current) {
@@ -35,7 +35,7 @@ const MessageInput = ({ selectedUser }) => {
 
     // Set new timeout to stop typing
     typingTimeoutRef.current = setTimeout(() => {
-      sendStopTyping(selectedUser._id);
+      sendStopTyping(activeRoom._id);
     }, 2000);
   };
 
